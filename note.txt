@@ -1,0 +1,2 @@
+# 1. 命令行输入的是字符串，例如输入‘-l 0 1 2’，在使用的时候，需要转换int(args.list[0])
+# 2. 时间相关输出参考[Python 日期和时间](http://www.runoob.com/python/python-date-time.html)
