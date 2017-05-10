@@ -69,15 +69,20 @@ parser.add_argument('--image_size', '-img-size', type=int, default=512,
                         ' | '.join(utils.IMAGE_SIZE) +
                         ' (default: 512)')
 
+
 import torch.nn as nn
 import math
 
+use_cuda = torch.cuda.is_available()
+
 args = parser.parse_args()
 devs = args.devlist
-torch.cuda.set_device(devs[0])
+
+if use_cuda:
+    torch.cuda.set_device(devs[0])
 
 def main():
-    global best_prec1
+    global best_prec1, best_kappa
     args = parser.parse_args()
 
     image_size = args.image_size
@@ -98,7 +103,8 @@ def main():
         print("=>creating model 'resnet-{}'".fomat(args.arch))
         model = models.ResNet_FT(args.arch, downsample=downsample)
 
-    model = torch.nn.DataParallel(model, device_ids=devs).cuda()
+    if use_cuda:
+        model = torch.nn.DataParallel(model, device_ids=devs).cuda()
 
     # optionally resume from a checkpoint
     if args.resume:
@@ -107,13 +113,15 @@ def main():
             checkpoint = torch.load(args.resume)
             args.start_epoch = checkpoint['epoch']
             best_prec1 = checkpoint['best_prec1']
+            best_kappa = checkpoint['best_kappa']
             model.load_state_dict(checkpoint['state_dict'])
             print("=> loaded checkpoint '{}' (epoch {})"
                   .format(args.resume, checkpoint['epoch']))
         else:
             print("=> no checkpoint found at '{}'".format(args.resume))
 
-    cudnn.benchmark = True
+    if use_cuda:
+        cudnn.benchmark = True
 
     # Data loading code
     traindir = os.path.join(args.data, 'train')
@@ -142,7 +150,11 @@ def main():
         num_workers=args.workers, pin_memory=False)
 
     # define loss function (criterion) and optimizer
-    criterion = nn.CrossEntropyLoss().cuda()
+    criterion = None
+    if use_cuda:
+        criterion = nn.CrossEntropyLoss().cuda()
+    else:
+        criterion = nn.CrossEntropyLoss()
 
     paramslist = [{'params': model.module.model.fc.parameters()},
                  ]
@@ -186,32 +198,34 @@ def main():
 
         # remember best prec@1 and save checkpoint
         # is_best = prec1 > best_prec1
-        is_best = kappa > best_prec1
+        is_best = kappa > best_kappa
         best_prec1 = max(prec1, best_prec1)
+        best_kappa = max(kappa, best_kappa)
         save_checkpoint({
             'epoch': epoch + 1,
             'arch': args.arch,
             'state_dict': model.state_dict(),
             'best_prec1': best_prec1,
+            'best_kappa': best_kappa
         }, is_best, args.best_model)
 
 
 def train(train_loader, model, criterion, optimizer, epoch):
-    batch_time = AverageMeter()
-    data_time = AverageMeter()
-    losses = AverageMeter()
-    top1 = AverageMeter()
-    top5 = AverageMeter()
-
     # switch to train mode
+    losses = AverageMeter()
+    prec = AverageMeter()
     model.train()
 
-    end = time.time()
-    for i, (input, target) in enumerate(train_loader):
-        # measure data loading time
-        data_time.update(time.time() - end)
+    reslist = []
+    targetlist = []
 
-        target = target.cuda(async=True)
+    nProcessed = 0
+    nTrain = len(train_loader.dataset)
+    for i, (input, target, path) in enumerate(train_loader):
+        for t in target:
+            targetlist.append(t)
+        if use_cuda:
+            input, target = input.cuda(), target.cuda(async=True)
         input_var = torch.autograd.Variable(input)
         target_var = torch.autograd.Variable(target)
 
@@ -219,53 +233,58 @@ def train(train_loader, model, criterion, optimizer, epoch):
         output = model(input_var)
         loss = criterion(output, target_var)
 
-        # measure accuracy and record loss
-        prec1, prec5 = accuracy(output.data, target, topk=(1, 2))
         losses.update(loss.data[0], input.size(0))
-        top1.update(prec1[0], input.size(0))
-        top5.update(prec5[0], input.size(0))
+
+        pred = output.data.max(1)[1]
+
+        outlist = pred.cpu().data.numpy()
+        for o in outlist:
+            reslist.append(o[0])
+
+        correct = pred.eq(target.data).cpu().sum
+        correct = 100.*correct/len(input)
+
+        prec.update(correct, input.size(0))
+
+        partialEpoch = epoch+i/len(train_loader)-1
+
+        nProcessed += len(input)
+
+        kp = ml_metrics.quadratic_weighted_kappa(targetlist, reslist, 0, 4)
+
+        print('Train Epoch: {:.2f} [{}/{} ({:.0f}%)]\tLoss: {loss.val:.4f} ({loss.avg:.4f})\t'
+              'Precious: {prec.val:.3f} ({prec.avg:.3f})\t'
+              'Quadratic_weighted_kappa: {kp:.4f}'.format(
+            partialEpoch, nProcessed, nTrain, 100. * i / len(train_loader),
+            loss=losses, prec=prec, kp=kp))
 
         # compute gradient and do SGD step
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
 
-        # measure elapsed time
-        batch_time.update(time.time() - end)
-        end = time.time()
-
-        if i % args.print_freq == 0:
-            print('Epoch: [{0}][{1}/{2}]\t'
-                  'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
-                  'Data {data_time.val:.3f} ({data_time.avg:.3f})\t'
-                  'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
-                  'Prec@1 {top1.val:.3f} ({top1.avg:.3f})\t'
-                  'Prec@2 {top5.val:.3f} ({top5.avg:.3f})'.format(
-                   epoch, i, len(train_loader), batch_time=batch_time,
-                   data_time=data_time, loss=losses, top1=top1, top5=top5))
-
 
 def validate(val_loader, model, criterion):
-    batch_time = AverageMeter()
-    losses = AverageMeter()
-    top1 = AverageMeter()
-    top5 = AverageMeter()
-
     # switch to evaluate mode
+    losses = AverageMeter()
+    prec = AverageMeter()
     model.eval()
 
-    end = time.time()
-
     reslist = []
-    nameslist = []
     targetlist = []
+
+    nProcessed = 0
+    nTrain = len(val_loader.dataset)
+
+    correct1 = 0
 
     for i, (input, target, path) in enumerate(val_loader):
 
         for t in target:
             targetlist.append(t)
 
-        target = target.cuda(async=True)
+        if use_cuda:
+            input, target = input.cuda(), target.cuda(async=True)
         input_var = torch.autograd.Variable(input, volatile=True)
         target_var = torch.autograd.Variable(target, volatile=True)
 
@@ -273,37 +292,37 @@ def validate(val_loader, model, criterion):
         output = model(input_var)
         loss = criterion(output, target_var)
 
-        # measure accuracy and record loss
-        prec1, prec5 = accuracy(output.data, target, topk=(1, 2))
         losses.update(loss.data[0], input.size(0))
-        top1.update(prec1[0], input.size(0))
-        top5.update(prec5[0], input.size(0))
 
-        _, pred = output.topk(1, 1, True, True)
+        # measure accuracy and record loss
+        pred = output.data.max(1)[1]
+
         outlist = pred.cpu().data.numpy()
         for o in outlist:
             reslist.append(o[0])
 
-        # measure elapsed time
-        batch_time.update(time.time() - end)
-        end = time.time()
+        correct = pred.eq(target.data).cpu().sum
+        correct1 += correct
+        correct = 100.*correct/len(input)
 
-        if i % args.print_freq == 0:
-            print('Test: [{0}/{1}]\t'
-                  'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
-                  'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
-                  'Prec@1 {top1.val:.3f} ({top1.avg:.3f})\t'
-                  'Prec@2 {top5.val:.3f} ({top5.avg:.3f})'.format(
-                   i, len(val_loader), batch_time=batch_time, loss=losses,
-                   top1=top1, top5=top5))
+        prec.update(correct, input.size(0))
 
-    print(' * Prec@1 {top1.avg:.3f} Prec@5 {top5.avg:.3f}'
-          .format(top1=top1, top5=top5))
+        nProcessed += len(input)
+
+        kp = ml_metrics.quadratic_weighted_kappa(targetlist, reslist, 0, 4)
+
+
 
     kp = ml_metrics.quadratic_weighted_kappa(targetlist, reslist, 0, 4)
     print('quadratic weighted kappa: {}'.format(kp))
 
-    return top1.avg,kp
+    nTotal = len(val_loader)
+    cor = 100.*correct1/nTotal
+    print('\nTest set: Average loss: {:.4f}, Precious: {}/{} ({:.0f}%)\t'
+          'Quadratic_weighted_kappa: {kp:.4f}\n'.format(
+        losses.avg, correct1, nTotal, cor, kp))
+
+    return cor,kp
 
 
 def save_checkpoint(state, is_best, filename='checkpoint.pth.tar'):
