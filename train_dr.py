@@ -27,7 +27,7 @@ model_names = models.resnet_ft_model_names
 parser = argparse.ArgumentParser(description='PyTorch Diabetic Retinopathy Training')
 parser.add_argument('data', metavar='DIR',
                     help='path to diabetic retinopathy dataset')
-parser.add_argument('--arch', '-a', metavar='ARCH', default='resnet18',
+parser.add_argument('--arch', '-a', metavar='ARCH', default='18',
                     choices=model_names,
                     help='model architecture: ' +
                         ' | '.join(model_names) +
@@ -66,7 +66,7 @@ parser.add_argument('-dev','--devlist', nargs='+', help='<Required> Set flag',
 parser.add_argument('--image_size', '-img-size', type=int, default=512,
                     choices=utils.IMAGE_SIZE,
                     help='image size: ' +
-                        ' | '.join(utils.IMAGE_SIZE) +
+                        ' | '.join(str(utils.IMAGE_SIZE)) +
                         ' (default: 512)')
 
 
@@ -83,6 +83,8 @@ if use_cuda:
 
 def main():
     global best_prec1, best_kappa
+    best_kappa = 0
+    best_prec1 = 0
     args = parser.parse_args()
 
     image_size = args.image_size
@@ -100,7 +102,7 @@ def main():
         print("=>creating model 'resnet-{}'".fomat(args.arch))
         model = models.ResNet_FT(args.arch, True, args.pretrained, downsample=downsample)
     else:
-        print("=>creating model 'resnet-{}'".fomat(args.arch))
+        # print("=>creating model 'resnet-{}'".fomat(args.arch))
         model = models.ResNet_FT(args.arch, downsample=downsample)
 
     if use_cuda:
@@ -124,23 +126,25 @@ def main():
         cudnn.benchmark = True
 
     # Data loading code
-    traindir = os.path.join(args.data, 'train')
-    valdir = os.path.join(args.data, 'val')
+    # traindir = os.path.join(args.data, 'train')
+    # valdir = os.path.join(args.data, 'val')
+    traindir = 'sample'
+    valdir = 'sample'
     normalize = transforms.Normalize(mean=utils.IMAGENET_MEAN,
                                      std=utils.IMAGENET_STD)
 
     train_loader = torch.utils.data.DataLoader(
-        datasets.ImageFolder(traindir, transforms.Compose([
+        utils.ImageFolder(traindir, transforms.Compose([
             transforms.RandomSizedCrop(crop_size),
             transforms.RandomHorizontalFlip(),
             transforms.ToTensor(),
             normalize,
         ])),
         batch_size=args.batch_size, shuffle=True,
-        num_workers=args.workers, pin_memory=True)
+        num_workers=args.workers, pin_memory=False)
 
     val_loader = torch.utils.data.DataLoader(
-        utils.ImageFolder1(valdir, transforms.Compose([
+        utils.ImageFolder(valdir, transforms.Compose([
             transforms.Scale(rescale_size),
             transforms.CenterCrop(crop_size),
             transforms.ToTensor(),
@@ -156,7 +160,7 @@ def main():
     else:
         criterion = nn.CrossEntropyLoss()
 
-    paramslist = [{'params': model.module.model.fc.parameters()},
+    paramslist = [{'params': model.fc.parameters()},
                  ]
 
     optimizer = torch.optim.SGD(paramslist, args.lr,
@@ -237,11 +241,11 @@ def train(train_loader, model, criterion, optimizer, epoch):
 
         pred = output.data.max(1)[1]
 
-        outlist = pred.cpu().data.numpy()
+        outlist = pred.numpy()
         for o in outlist:
             reslist.append(o[0])
 
-        correct = pred.eq(target.data).cpu().sum
+        correct = pred.eq(target).numpy().sum()
         correct = 100.*correct/len(input)
 
         prec.update(correct, input.size(0))
@@ -297,11 +301,13 @@ def validate(val_loader, model, criterion):
         # measure accuracy and record loss
         pred = output.data.max(1)[1]
 
-        outlist = pred.cpu().data.numpy()
+        # outlist = pred.cpu().data.numpy()
+        outlist = pred.numpy()
         for o in outlist:
             reslist.append(o[0])
 
-        correct = pred.eq(target.data).cpu().sum
+        # correct = pred.eq(target.data).cpu().sum()
+        correct = pred.eq(target).sum()
         correct1 += correct
         correct = 100.*correct/len(input)
 
@@ -319,7 +325,7 @@ def validate(val_loader, model, criterion):
     nTotal = len(val_loader)
     cor = 100.*correct1/nTotal
     print('\nTest set: Average loss: {:.4f}, Precious: {}/{} ({:.0f}%)\t'
-          'Quadratic_weighted_kappa: {kp:.4f}\n'.format(
+          'Quadratic_weighted_kappa: {:.4f}\n'.format(
         losses.avg, correct1, nTotal, cor, kp))
 
     return cor,kp

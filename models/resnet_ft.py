@@ -112,16 +112,16 @@ class ResNet_FT(nn.Module):
         x = self.fc(x)
         return x
 
-    def getModel(self, models):
-        if models == '18':
+    def getModel(self, modelsname):
+        if modelsname == '18':
             return models.ResNet(BasicBlock, [2, 2, 2, 2], num_classes=1000)
-        elif models == '34':
+        elif modelsname == '34':
             return models.ResNet(BasicBlock, [3, 4, 6, 3], num_classes=1000)
-        elif models == '50':
+        elif modelsname == '50':
             return models.ResNet(Bottleneck, [3, 4, 6, 3], num_classes=1000)
-        elif models == '101':
+        elif modelsname == '101':
             return models.ResNet(Bottleneck, [3, 4, 23, 3], num_classes=1000)
-        elif models == '152':
+        elif modelsname == '152':
             return models.ResNet(Bottleneck, [3, 8, 36, 3], num_classes=1000)
         else:
             return None

@@ -4,3 +4,7 @@ sample/*
 .idea/*
 *.JPG
 *.zip
+*.pth
+*.txt
+*.jpeg
+*/__pycache__/*
