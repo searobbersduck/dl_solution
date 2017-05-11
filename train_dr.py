@@ -246,7 +246,11 @@ def train(train_loader, model, criterion, optimizer, epoch):
 
         pred = output.data.max(1)[1]
 
-        outlist = pred.cpu().data.numpy()
+        if use_cuda:
+            outlist = pred.cpu().data.numpy()
+        else:
+            outlist = pred.numpy()
+
         for o in outlist:
             reslist.append(o[0])
 
@@ -306,8 +310,11 @@ def validate(val_loader, model, criterion):
         # measure accuracy and record loss
         pred = output.data.max(1)[1]
 
-        # outlist = pred.cpu().data.numpy()
-        outlist = pred.cpu().data.numpy()
+        if use_cuda:
+            outlist = pred.cpu().data.numpy()
+        else:
+            outlist = pred.numpy()
+
         for o in outlist:
             reslist.append(o[0])
 
