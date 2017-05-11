@@ -99,10 +99,10 @@ def main():
 
     # create model
     if args.pretrained is not None:
-        print("=>creating model 'resnet-{}'".fomat(args.arch))
+        print("=>creating model 'resnet-{}'".format(args.arch))
         model = models.ResNet_FT(args.arch, True, args.pretrained, downsample=downsample)
     else:
-        # print("=>creating model 'resnet-{}'".fomat(args.arch))
+        print("=>creating model 'resnet-{}'".format(args.arch))
         model = models.ResNet_FT(args.arch, downsample=downsample)
 
     if use_cuda:
@@ -247,7 +247,7 @@ def train(train_loader, model, criterion, optimizer, epoch):
         pred = output.data.max(1)[1]
 
         if use_cuda:
-            outlist = pred.cpu().data.numpy()
+            outlist = pred.cpu().numpy()
         else:
             outlist = pred.numpy()
 
@@ -311,7 +311,7 @@ def validate(val_loader, model, criterion):
         pred = output.data.max(1)[1]
 
         if use_cuda:
-            outlist = pred.cpu().data.numpy()
+            outlist = pred.cpu().numpy()
         else:
             outlist = pred.numpy()
 
