@@ -254,7 +254,11 @@ def train(train_loader, model, criterion, optimizer, epoch):
         for o in outlist:
             reslist.append(o[0])
 
-        correct = pred.eq(target).numpy().sum()
+        if use_cuda:
+            correct = pred.eq(target).cpu().numpy().sum()
+        else:
+            correct = pred.eq(target).numpy().sum()
+
         correct = 100.*correct/len(input)
 
         prec.update(correct, input.size(0))
@@ -322,6 +326,7 @@ def validate(val_loader, model, criterion):
             correct = pred.eq(target.data).cpu().sum()
         else:
             correct = pred.eq(target).sum()
+
         correct1 += correct
         correct = 100.*correct/len(input)
 
