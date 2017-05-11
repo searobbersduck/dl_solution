@@ -8,3 +8,4 @@ sample/*
 *.txt
 *.jpeg
 */__pycache__/*
+*check_point*

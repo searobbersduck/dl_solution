@@ -318,8 +318,10 @@ def validate(val_loader, model, criterion):
         for o in outlist:
             reslist.append(o[0])
 
-        # correct = pred.eq(target.data).cpu().sum()
-        correct = pred.eq(target).sum()
+        if use_cuda:
+            correct = pred.eq(target.data).cpu().sum()
+        else:
+            correct = pred.eq(target).sum()
         correct1 += correct
         correct = 100.*correct/len(input)
 
