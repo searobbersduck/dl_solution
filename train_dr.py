@@ -160,8 +160,13 @@ def main():
     else:
         criterion = nn.CrossEntropyLoss()
 
-    paramslist = [{'params': model.fc.parameters()},
-                 ]
+    if use_cuda:
+        paramslist = [{'params': model.module.fc.parameters()},
+                      ]
+    else:
+        paramslist = [{'params': model.fc.parameters()},
+                      ]
+
 
     optimizer = torch.optim.SGD(paramslist, args.lr,
                                 momentum=args.momentum,
@@ -241,7 +246,7 @@ def train(train_loader, model, criterion, optimizer, epoch):
 
         pred = output.data.max(1)[1]
 
-        outlist = pred.numpy()
+        outlist = pred.cpu().data.numpy()
         for o in outlist:
             reslist.append(o[0])
 
@@ -302,7 +307,7 @@ def validate(val_loader, model, criterion):
         pred = output.data.max(1)[1]
 
         # outlist = pred.cpu().data.numpy()
-        outlist = pred.numpy()
+        outlist = pred.cpu().data.numpy()
         for o in outlist:
             reslist.append(o[0])
 
