@@ -130,10 +130,10 @@ def main():
         cudnn.benchmark = True
 
     # Data loading code
-    # traindir = os.path.join(args.data, 'train')
-    # valdir = os.path.join(args.data, 'val')
-    traindir = 'sample'
-    valdir = 'sample'
+    traindir = os.path.join(args.data, 'train')
+    valdir = os.path.join(args.data, 'val')
+    # traindir = 'sample'
+    # valdir = 'sample'
     normalize = transforms.Normalize(mean=utils.IMAGENET_MEAN,
                                      std=utils.IMAGENET_STD)
 

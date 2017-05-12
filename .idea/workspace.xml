@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="621fd6fd-a2e0-43ab-b6e9-e1213ea8e804" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/models/resnet_ft.py" afterPath="$PROJECT_DIR$/models/resnet_ft.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/train_dr.py" afterPath="$PROJECT_DIR$/train_dr.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -43,8 +42,8 @@
           <file leaf-file-name="train_dr.py" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/train_dr.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="357">
-                  <caret line="195" column="48" lean-forward="true" selection-start-line="195" selection-start-column="48" selection-end-line="195" selection-end-column="48" />
+                <state relative-caret-position="342">
+                  <caret line="131" column="23" lean-forward="true" selection-start-line="131" selection-start-column="23" selection-end-line="131" selection-end-column="23" />
                   <folding>
                     <element signature="e#0#15#0" expanded="true" />
                   </folding>
@@ -916,8 +915,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/train_dr.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="195" column="48" lean-forward="true" selection-start-line="195" selection-start-column="48" selection-end-line="195" selection-end-column="48" />
+        <state relative-caret-position="342">
+          <caret line="131" column="23" lean-forward="true" selection-start-line="131" selection-start-column="23" selection-end-line="131" selection-end-column="23" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
           </folding>
