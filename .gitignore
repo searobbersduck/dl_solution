@@ -9,3 +9,4 @@ sample/*
 *.jpeg
 */__pycache__/*
 *check_point*
+.DS_Store

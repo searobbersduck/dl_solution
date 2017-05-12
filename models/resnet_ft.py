@@ -94,7 +94,11 @@ class Bottleneck(nn.Module):
 class ResNet_FT(nn.Module):
     def __init__(self, models='18', pretrained=False, pretrained_model=None, downsample=False):
         super(ResNet_FT,self).__init__()
-        self.model = self.getModel(models)
+        self.pretrained = pretrained
+        if pretrained:
+            self.model = self.getModel(models)
+        else:
+            self.model = self.getModel(models, 5)
         if self.model is None:
             print('ResNet Fine Tune model failed!')
             return
@@ -109,19 +113,20 @@ class ResNet_FT(nn.Module):
 
     def forward(self, x):
         x = self.model(x)
-        x = self.fc(x)
+        if self.pretrained:
+            x = self.fc(x)
         return x
 
-    def getModel(self, modelsname):
+    def getModel(self, modelsname, num_classes=1000):
         if modelsname == '18':
-            return models.ResNet(BasicBlock, [2, 2, 2, 2], num_classes=1000)
+            return models.ResNet(BasicBlock, [2, 2, 2, 2], num_classes=num_classes)
         elif modelsname == '34':
-            return models.ResNet(BasicBlock, [3, 4, 6, 3], num_classes=1000)
+            return models.ResNet(BasicBlock, [3, 4, 6, 3], num_classes=num_classes)
         elif modelsname == '50':
-            return models.ResNet(Bottleneck, [3, 4, 6, 3], num_classes=1000)
+            return models.ResNet(Bottleneck, [3, 4, 6, 3], num_classes=num_classes)
         elif modelsname == '101':
-            return models.ResNet(Bottleneck, [3, 4, 23, 3], num_classes=1000)
+            return models.ResNet(Bottleneck, [3, 4, 23, 3], num_classes=num_classes)
         elif modelsname == '152':
-            return models.ResNet(Bottleneck, [3, 8, 36, 3], num_classes=1000)
+            return models.ResNet(Bottleneck, [3, 8, 36, 3], num_classes=num_classes)
         else:
             return None
