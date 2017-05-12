@@ -94,14 +94,16 @@ class Bottleneck(nn.Module):
 class ResNet_FT(nn.Module):
     def __init__(self, models='18', pretrained=False, pretrained_model=None, downsample=False):
         super(ResNet_FT,self).__init__()
+
         self.pretrained = pretrained
         if pretrained:
             self.model = self.getModel(models)
+            if self.model is None:
+                print('ResNet Fine Tune model failed!')
+                return
         else:
             self.model = self.getModel(models, 5)
-        if self.model is None:
-            print('ResNet Fine Tune model failed!')
-            return
+
         if pretrained:
             self.model.load_state_dict(torch.load(pretrained_model))
             for param in self.model.parameters():
@@ -114,6 +116,7 @@ class ResNet_FT(nn.Module):
     def forward(self, x):
         x = self.model(x)
         if self.pretrained:
+            x = nn.functional.dropout(x)
             x = self.fc(x)
         return x
 

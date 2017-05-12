@@ -130,10 +130,10 @@ def main():
         cudnn.benchmark = True
 
     # Data loading code
-    traindir = os.path.join(args.data, 'train')
-    valdir = os.path.join(args.data, 'val')
-    # traindir = 'sample'
-    # valdir = 'sample'
+    # traindir = os.path.join(args.data, 'train')
+    # valdir = os.path.join(args.data, 'val')
+    traindir = 'sample'
+    valdir = 'sample'
     normalize = transforms.Normalize(mean=utils.IMAGENET_MEAN,
                                      std=utils.IMAGENET_STD)
 
@@ -171,13 +171,13 @@ def main():
             paramslist = [{'params': model.module.fc.parameters()},
                           ]
         else:
-            paramslist = model.parameters()
+            paramslist = [{'params': model.parameters()}]
     else:
         if fine_tune_label:
             paramslist = [{'params': model.fc.parameters()},
                           ]
         else:
-            paramslist = model.parameters()
+            paramslist = [{'params': model.parameters()}]
 
 
 
@@ -193,13 +193,13 @@ def main():
                                     weight_decay=args.weight_decay)
         is_adjust_lr = True
     elif args.optimizer == 1:
-        optimizer = torch.optim.Adam(paramslist, args.lr, weight_decay=args.weight_decay)
+        optimizer = torch.optim.Adam(paramslist)
     elif args.optimizer == 2:
-        optimizer = torch.optim.Adadelta(paramslist, args.lr, weight_decay=args.weight_decay)
+        optimizer = torch.optim.Adadelta(paramslist)
     elif args.optimizer == 3:
-        optimizer = torch.optim.Adagrad(paramslist,args.lr, weight_decay=args.weight_decay)
+        optimizer = torch.optim.Adagrad(paramslist)
     elif args.optimizer == 4:
-        optimizer = torch.optim.RMSprop(paramslist, args.lr, weight_decay=args.weight_decay)
+        optimizer = torch.optim.RMSprop(paramslist)
 
     else:
         is_adjust_lr = True
@@ -340,7 +340,7 @@ def validate(val_loader, model, criterion):
 
         correct = None
         if use_cuda:
-            correct = pred.eq(target.data).cpu().numpy().sum()
+            correct = pred.eq(target).cpu().numpy().sum()
         else:
             correct = pred.eq(target).numpy().sum()
 
@@ -351,7 +351,7 @@ def validate(val_loader, model, criterion):
 
         nProcessed += len(input)
 
-        kp = ml_metrics.quadratic_weighted_kappa(targetlist, reslist, 0, 4)
+        # kp = ml_metrics.quadratic_weighted_kappa(targetlist, reslist, 0, 4)
 
 
 
