@@ -130,10 +130,10 @@ def main():
         cudnn.benchmark = True
 
     # Data loading code
-    # traindir = os.path.join(args.data, 'train')
-    # valdir = os.path.join(args.data, 'val')
-    traindir = 'sample'
-    valdir = 'sample'
+    traindir = os.path.join(args.data, 'train')
+    valdir = os.path.join(args.data, 'val')
+    # traindir = 'sample'
+    # valdir = 'sample'
     normalize = transforms.Normalize(mean=utils.IMAGENET_MEAN,
                                      std=utils.IMAGENET_STD)
 
@@ -340,9 +340,9 @@ def validate(val_loader, model, criterion):
 
         correct = None
         if use_cuda:
-            correct = pred.eq(target.data).cpu().sum()
+            correct = pred.eq(target.data).cpu().numpy().sum()
         else:
-            correct = pred.eq(target).sum()
+            correct = pred.eq(target).numpy().sum()
 
         correct1 += correct
         correct = 100.*correct/len(input)
