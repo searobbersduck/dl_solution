@@ -97,9 +97,13 @@ def main():
         crop_size = 224
         downsample = True
 
+    fine_tune_label = False
+
     # create model
     if args.pretrained is not None:
         print("=>creating model 'resnet-{}'".format(args.arch))
+        print("fine tune")
+        fine_tune_label = True
         model = models.ResNet_FT(args.arch, True, args.pretrained, downsample=downsample)
     else:
         print("=>creating model 'resnet-{}'".format(args.arch))
@@ -160,12 +164,21 @@ def main():
     else:
         criterion = nn.CrossEntropyLoss()
 
+    paramslist = None
+
     if use_cuda:
-        paramslist = [{'params': model.module.fc.parameters()},
-                      ]
+        if fine_tune_label:
+            paramslist = [{'params': model.module.fc.parameters()},
+                          ]
+        else:
+            paramslist = model.parameters()
     else:
-        paramslist = [{'params': model.fc.parameters()},
-                      ]
+        if fine_tune_label:
+            paramslist = [{'params': model.fc.parameters()},
+                          ]
+        else:
+            paramslist = model.parameters()
+
 
 
     optimizer = torch.optim.SGD(paramslist, args.lr,
@@ -246,6 +259,7 @@ def train(train_loader, model, criterion, optimizer, epoch):
 
         pred = output.data.max(1)[1]
 
+        outlist=None
         if use_cuda:
             outlist = pred.cpu().numpy()
         else:
@@ -254,6 +268,7 @@ def train(train_loader, model, criterion, optimizer, epoch):
         for o in outlist:
             reslist.append(o[0])
 
+        correct = None
         if use_cuda:
             correct = pred.eq(target).cpu().numpy().sum()
         else:
@@ -314,6 +329,7 @@ def validate(val_loader, model, criterion):
         # measure accuracy and record loss
         pred = output.data.max(1)[1]
 
+        outlist = None
         if use_cuda:
             outlist = pred.cpu().numpy()
         else:
@@ -322,6 +338,7 @@ def validate(val_loader, model, criterion):
         for o in outlist:
             reslist.append(o[0])
 
+        correct = None
         if use_cuda:
             correct = pred.eq(target.data).cpu().sum()
         else:
@@ -341,7 +358,7 @@ def validate(val_loader, model, criterion):
     kp = ml_metrics.quadratic_weighted_kappa(targetlist, reslist, 0, 4)
     print('quadratic weighted kappa: {}'.format(kp))
 
-    nTotal = len(val_loader)
+    nTotal = len(val_loader.dataset)
     cor = 100.*correct1/nTotal
     print('\nTest set: Average loss: {:.4f}, Precious: {}/{} ({:.0f}%)\t'
           'Quadratic_weighted_kappa: {:.4f}\n'.format(
