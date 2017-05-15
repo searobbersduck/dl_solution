@@ -282,7 +282,10 @@ def train(train_loader, model, criterion, optimizer, epoch):
 
         nProcessed += len(input)
 
-        kp = ml_metrics.quadratic_weighted_kappa(targetlist, reslist, 0, 4)
+        try:
+            kp = ml_metrics.quadratic_weighted_kappa(targetlist, reslist, 0, 4)
+        except:
+            print('ml_metrics kappa value error!!!')
 
         print('Train Epoch: {:.2f} [{}/{} ({:.0f}%)]\tLoss: {loss.val:.4f} ({loss.avg:.4f})\t'
               'Precious: {prec.val:.3f} ({prec.avg:.3f})\t'
@@ -354,8 +357,11 @@ def validate(val_loader, model, criterion):
         # kp = ml_metrics.quadratic_weighted_kappa(targetlist, reslist, 0, 4)
 
 
+    try:
+        kp = ml_metrics.quadratic_weighted_kappa(targetlist, reslist, 0, 4)
+    except:
+        print('ml_metrics kappa value error!!!')
 
-    kp = ml_metrics.quadratic_weighted_kappa(targetlist, reslist, 0, 4)
     print('quadratic weighted kappa: {}'.format(kp))
 
     nTotal = len(val_loader.dataset)

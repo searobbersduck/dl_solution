@@ -8,5 +8,7 @@ sample/*
 *.txt
 *.jpeg
 */__pycache__/*
+preprocessing/__pycache__/*
+preprocessing/__pycache__/image_preprocessed.cpython-36.pyc
 *check_point*
 .DS_Store
