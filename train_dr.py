@@ -282,6 +282,7 @@ def train(train_loader, model, criterion, optimizer, epoch):
 
         nProcessed += len(input)
 
+        kp = 0
         try:
             kp = ml_metrics.quadratic_weighted_kappa(targetlist, reslist, 0, 4)
         except:
@@ -356,7 +357,7 @@ def validate(val_loader, model, criterion):
 
         # kp = ml_metrics.quadratic_weighted_kappa(targetlist, reslist, 0, 4)
 
-
+    kp = 0
     try:
         kp = ml_metrics.quadratic_weighted_kappa(targetlist, reslist, 0, 4)
     except:
