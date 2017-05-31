@@ -1,4 +1,4 @@
-# invoke script: python test_dr.py ./pretrained_models/best_model_test --arch '18' -dev 0
+# invoke script: python test_dr.py ./pretrained_models/best_model_test --arch 18 -dev 0
 
 import models
 
@@ -95,6 +95,12 @@ class DrImageClassifier(object):
 
         return res[0][0]
 
+def import_test():
+    print("welcome!")
+
+def get_classifier():
+    classifier = DrImageClassifier(args.arch, args.model, False, use_cuda, devs)
+    return classifier
 
 def main():
 

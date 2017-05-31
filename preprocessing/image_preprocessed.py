@@ -37,5 +37,5 @@ def tight_crop(img, size=None):
 def channelwise_ahe(img):
     img_ahe = img.copy()
     for i in range(img.shape[2]):
-        img_ahe[:,:,i] = exposure.equalize_adapthist(img[:,:,i], clip_limit=0.1)
+        img_ahe[:,:,i] = exposure.equalize_adapthist(img[:,:,i], clip_limit=0.03)
     return img_ahe
