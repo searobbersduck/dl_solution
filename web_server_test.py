@@ -53,6 +53,7 @@ class ImageHTTPRequestHandler(BaseHTTPRequestHandler):
         if self.headers['Content-type'] == 'image/jpeg':
             self._classify()
         elif self.headers['Content-type'] == 'text/plain':
+            print('begin outside _doctor_confirm')
             self._doctor_confirm()
 
     def do_POST(self):
@@ -108,6 +109,7 @@ class ImageHTTPRequestHandler(BaseHTTPRequestHandler):
         cursor.execute('select * from dr_image_tb')
         print(cursor.fetchall())
         cursor.execute('commit')
+        print('end inside _doctor_confirm')
 
 
 

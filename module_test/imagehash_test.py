@@ -19,6 +19,8 @@ print(hash)
 # install python2 mysql pip install MySQL-python
 # note: when install mysql, be sure to stop mysql server service: 'mysql.server stop'
 
+# start mysql server on mac: mysql.server start
+# start mysql server on centos6: sudo service mysqld start, reference: https://www.linode.com/docs/databases/mysql/how-to-install-mysql-on-centos-6
 
 import pymysql
 

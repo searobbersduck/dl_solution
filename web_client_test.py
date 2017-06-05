@@ -45,19 +45,20 @@
 
 import http.client
 
-conn = http.client.HTTPConnection('127.0.0.1', port=8002)
+# conn = http.client.HTTPConnection('127.0.0.1', port=8002)
 
 # conn = http.client.HTTPConnection('yq01-idl-gpu-offline80.yq01.baidu.com', port=8002)
 
-# conn = http.client.HTTPConnection("face.baidu.com")
+conn = http.client.HTTPConnection("face.baidu.com")
 
 data = open('sample/3/16_left.jpeg', 'rb').read()
 
 headers = {"Content-type": "image/jpeg", "Accept": "q=0.6, image/jpeg", "Content-Length": str(len(data))}
 
 # conn.request('POST', "/test/for/medical", data, headers)
+conn.request('GET', "/test/for/medical", data, headers)
 # conn.request('POST', "", data, headers)
-conn.request('GET', "", data, headers)
+# conn.request('GET', "", data, headers)
 
 r = conn.getresponse()
 
