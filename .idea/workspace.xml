@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="621fd6fd-a2e0-43ab-b6e9-e1213ea8e804" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/module_test/imagehash_test.py" afterPath="$PROJECT_DIR$/module_test/imagehash_test.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web_client_test.py" afterPath="$PROJECT_DIR$/web_client_test.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web_server_test.py" afterPath="$PROJECT_DIR$/web_server_test.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -74,8 +72,8 @@
           <file leaf-file-name="web_server_test.py" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/web_server_test.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="555">
-                  <caret line="111" column="41" lean-forward="false" selection-start-line="111" selection-start-column="41" selection-end-line="111" selection-end-column="41" />
+                <state relative-caret-position="225">
+                  <caret line="52" column="69" lean-forward="false" selection-start-line="52" selection-start-column="69" selection-end-line="52" selection-end-column="69" />
                   <folding>
                     <element signature="e#0#18#0" expanded="true" />
                   </folding>
@@ -604,7 +602,7 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="13" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32920355" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.339823" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.339823" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Execute Anonymous" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32920355" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.41858408" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.120589785" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -729,7 +727,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/web_server_test.py</url>
-          <line>59</line>
+          <line>60</line>
           <option name="timeStamp" value="137" />
         </line-breakpoint>
       </breakpoints>
@@ -1095,8 +1093,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/web_server_test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="555">
-          <caret line="111" column="41" lean-forward="false" selection-start-line="111" selection-start-column="41" selection-end-line="111" selection-end-column="41" />
+        <state relative-caret-position="225">
+          <caret line="52" column="69" lean-forward="false" selection-start-line="52" selection-start-column="69" selection-end-line="52" selection-end-column="69" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>

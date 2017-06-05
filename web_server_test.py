@@ -50,6 +50,7 @@ class ImageHTTPRequestHandler(BaseHTTPRequestHandler):
     """
 
     def do_GET(self):
+        print('Content type: {0}'.format(self.headers['Content-type']))
         if self.headers['Content-type'] == 'image/jpeg':
             self._classify()
         elif self.headers['Content-type'] == 'text/plain':
