@@ -91,6 +91,7 @@ class ImageHTTPRequestHandler(BaseHTTPRequestHandler):
                 idx, image_id
             )
         cursor.execute(cmd_insert)
+        cursor.execute('commit')
 
         print('dr image is level: {}'.format(idx))
         self.send_response(HTTPStatus.OK)
@@ -106,6 +107,7 @@ class ImageHTTPRequestHandler(BaseHTTPRequestHandler):
         cursor.execute(cmd_inserttb)
         cursor.execute('select * from dr_image_tb')
         print(cursor.fetchall())
+        cursor.execute('commit')
 
 
 
