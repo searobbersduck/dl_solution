@@ -86,7 +86,8 @@ class DrImageClassifier(object):
         output = self.model(input_var)
 
         pred = output.data.max(1)[1]
-        prop = pred = output.data.max(1)[0]
+        m = torch.nn.Softmax()
+        prop = m(output).data.max(1)[0]
 
         res = 0
         if self.use_cuda:
