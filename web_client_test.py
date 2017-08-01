@@ -67,6 +67,7 @@ conn.request('GET', "/test/for/medical", data, headers)
 r = conn.getresponse()
 
 print('The image dr level is: {}'.format(r.headers['idx']))
+print('The image dr level propobility is: {}'.format(r.headers['prop']))
 
 image_uid = r.headers['image_uid']
 
