@@ -16,3 +16,5 @@ pretrained_models
 pretrained_models/*
 best_model_test
 test
+preprocessing/__pycache__
+*.png

@@ -13,3 +13,7 @@
 4. [[]和（）有什么区别？](http://www.cnblogs.com/deepleo/p/python-list-tuple-dict.html)
     * []列表，其中的元素可以改变，()元组，其中的元素不能改变，其余部分两者很相似。
     
+5. [pytorch多机多卡问题](https://discuss.pytorch.org/t/running-pytorch-on-multiple-nodes/1806)
+    * 目前的版本还不支持，应该会加入之后的版本
+    * [PyTorch goes distributed](https://github.com/pytorch/pytorch/issues/241)
+    * [这个版本会加入，关注](https://github.com/pytorch/pytorch/milestone/2)

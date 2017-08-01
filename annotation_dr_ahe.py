@@ -53,17 +53,17 @@ def image_processing_and_save_segmentation(imgpath):
 #         image_processing_and_save(path, args.save, i)
 
 
-# imgpath = '/Users/zhangweidong03/Code/dl/pytorch/github/piwise/MAdata_patches/images/C0000886_5_6.jpg'
-# img = scipy.misc.imread(imgpath)
-# img = img.astype(np.float32)
-# img /= 255
-# img_ahe = preprocessing.channelwise_ahe(img)
-# pilImage = Image.fromarray(skimage.util.img_as_ubyte(img_ahe))
-# pilImage.save('patch.jpg')
+imgpath = './368_left_1024.png'
+img = scipy.misc.imread(imgpath)
+img = img.astype(np.float32)
+img /= 255
+img_ahe = preprocessing.channelwise_ahe(img)
+pilImage = Image.fromarray(skimage.util.img_as_ubyte(img_ahe))
+pilImage.save('368_left_1024_ahe_0.1.png')
 
-root = '/Users/zhangweidong03/Code/dl/pytorch/github/pi/piwise/MAdata_patches/images'
-files = os.listdir('/Users/zhangweidong03/Code/dl/pytorch/github/pi/piwise/MAdata_patches/images')
-files.sort()
-for f in files:
-    ff = os.path.join(root, f)
-    image_processing_and_save_segmentation(ff)
+# jpgroot = '/Users/zhangweidong03/Code/dl/pytorch/github/pi/piwise/MAdata_patches/images'
+# files = os.listdir('/Users/zhangweidong03/Code/dl/pytorch/github/pi/piwise/MAdata_patches/images')
+# files.sort()
+# for f in files:
+#     ff = os.path.join(root, f)
+#     image_processing_and_save_segmentation(ff)

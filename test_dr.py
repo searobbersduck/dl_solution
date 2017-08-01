@@ -86,14 +86,17 @@ class DrImageClassifier(object):
         output = self.model(input_var)
 
         pred = output.data.max(1)[1]
+        prop = pred = output.data.max(1)[0]
 
         res = 0
         if self.use_cuda:
             res = pred.cpu().numpy()
+            res_prop = prop.cpu().numpy()
         else:
             res = pred.numpy()
+            res_prop = prop.numpy()
 
-        return res[0][0]
+        return res[0][0], res_prop[0][0]
 
 def import_test():
     print("welcome!")
@@ -109,7 +112,7 @@ def main():
     imgpath = 'sample/1/978_left.jpeg'
     img = Image.open(imgpath)
 
-    idx = classifier.classifyImage(img)
+    idx,_ = classifier.classifyImage(img)
 
     print(idx)
 
