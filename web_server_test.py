@@ -65,12 +65,12 @@ class ImageHTTPRequestHandler(BaseHTTPRequestHandler):
         stream = BytesIO(data1)
         img = Image.open(stream)
         # print(img.size())
-        idx,prop = classifier.classifyImage(img)
+        idx,prop,prop1 = classifier.classifyImage(img)
         print('dr image is level: {}'.format(idx))
         self.send_response(HTTPStatus.OK)
         self.send_header("Content-type", 'text/plain')
         self.send_header("idx", str(idx))
-        self.send_header("prop", str(prop))
+        self.send_header("prop", str(prop1))
         self.end_headers()
 
     def _classify(self):
@@ -78,7 +78,8 @@ class ImageHTTPRequestHandler(BaseHTTPRequestHandler):
         stream = BytesIO(data1)
         img = Image.open(stream)
         image_id = imagehash.average_hash(img)
-        idx,prop = classifier.classifyImage(img)
+        idx,prop,prop1 = classifier.classifyImage(img)
+        print(prop1)
         cmd_query = """select * from dr_image_tb where id='{0}'""".format(image_id)
         cursor.execute(cmd_query)
         query = cursor.fetchall()
@@ -100,7 +101,7 @@ class ImageHTTPRequestHandler(BaseHTTPRequestHandler):
         self.send_response(HTTPStatus.OK)
         self.send_header("Content-type", 'text/plain')
         self.send_header("idx", str(idx))
-        self.send_header("prop", str(prop))
+        self.send_header("prop", str(prop1))
         self.send_header("image_uid", str(image_id))
         self.end_headers()
 

@@ -88,16 +88,19 @@ class DrImageClassifier(object):
         pred = output.data.max(1)[1]
         m = torch.nn.Softmax()
         prop = m(output).data.max(1)[0]
+        prop1 = m(output).data
 
         res = 0
         if self.use_cuda:
             res = pred.cpu().numpy()
             res_prop = prop.cpu().numpy()
+            res_prop1 = prop1.cpu().numpy()
         else:
             res = pred.numpy()
             res_prop = prop.numpy()
+            res_prop1 = prop1.numpy()
 
-        return res[0][0], res_prop[0][0]
+        return res[0][0], res_prop[0][0], res_prop1
 
 def import_test():
     print("welcome!")
