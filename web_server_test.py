@@ -80,22 +80,25 @@ class ImageHTTPRequestHandler(BaseHTTPRequestHandler):
         image_id = imagehash.average_hash(img)
         idx,prop,prop1 = classifier.classifyImage(img)
         print(prop1)
-        cmd_query = """select * from dr_image_tb where id='{0}'""".format(image_id)
-        cursor.execute(cmd_query)
-        query = cursor.fetchall()
-        assert len(query) <= 1
-        if len(query) == 0:
-            imagepath = os.path.join(image_root, '{}.jpeg'.format(image_id))
-            img.save(imagepath)
-            cmd_insert = """insert into dr_image_tb (id, imagepath, algolevel) values ('{0}', '{1}', {2})""".format(
-                image_id, imagepath, idx
-            )
-        else:
-            cmd_insert = """update dr_image_tb set algolevel={0} where id='{1}'""".format(
-                idx, image_id
-            )
-        cursor.execute(cmd_insert)
-        cursor.execute('commit')
+        try:
+            cmd_query = """select * from dr_image_tb where id='{0}'""".format(image_id)
+            cursor.execute(cmd_query)
+            query = cursor.fetchall()
+            assert len(query) <= 1
+            if len(query) == 0:
+                imagepath = os.path.join(image_root, '{}.jpeg'.format(image_id))
+                img.save(imagepath)
+                cmd_insert = """insert into dr_image_tb (id, imagepath, algolevel) values ('{0}', '{1}', {2})""".format(
+                    image_id, imagepath, idx
+                )
+            else:
+                cmd_insert = """update dr_image_tb set algolevel={0} where id='{1}'""".format(
+                    idx, image_id
+                )
+            cursor.execute(cmd_insert)
+            cursor.execute('commit')
+        except:
+            print('database operation error!!!!')
 
         print('dr image is level: {}'.format(idx))
         self.send_response(HTTPStatus.OK)
